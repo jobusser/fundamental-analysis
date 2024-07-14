@@ -8,6 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from selenium.common.exceptions import TimeoutException
 
+# https://brightdata.com/blog/how-tos/scrape-yahoo-finance-guide
 
 def handle_cookies(driver):
     try:
@@ -33,30 +34,25 @@ def scrape_summary(driver, ticker):
         # Print the results
         print(stock_price_element.text)
 
-        # Wait until the 'Financials' link is present
-        financials_link = driver.find_element(By.CSS_SELECTOR, 'a[href="/quote/AAPL/financials/"]')
-    
-        # Click the 'Financials' link
-        financials_link.click()
-
     except TimeoutException:
         print('Cookie consent overlay not found or already accepted')
 
 
 def scrape_financials(driver, ticker):
-    driver.get("https://finance.yahoo.com/quote/AAPL/financials/")
+    driver.get(f"https://finance.yahoo.com/quote/{ticker}/financials/")
     try:
-        # Example: Extract the stock price
-        stock_price_element = driver.find_element(By.CSS_SELECTOR, 'h1.svelte-3a2v0c')
 
         # Print the results
-        print(stock_price_element.text)
+        button = driver.find_element(By.CSS_SELECTOR, 
+                             ".link2-btn.fin-size-x-small.rounded.svelte-122t2xs[data-ylk='elm:expand;sec:qsp-financials;slk:financials-report-all']")
 
-        # Wait until the 'Financials' link is present
-        financials_link = driver.find_element(By.CSS_SELECTOR, 'a[href="/quote/AAPL/financials/"]')
-    
-        # Click the 'Financials' link
-        financials_link.click()
+        button.click()
+
+
+        operating_rev = driver.find_elements(By.CSS_SELECTOR, ".rowTitle")
+
+        for element in operating_rev:
+            print(element.text)
 
     except TimeoutException:
         print('Cookie consent overlay not found or already accepted')
